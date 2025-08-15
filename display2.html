@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>شاشة مكتب 2</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body,html{
+    height:100%;
+    font-family:'Segoe UI',Tahoma,sans-serif;
+    color:#fff;
+  }
+  
+  /* الصورة خلفية */
+  .bg {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    z-index: -1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .bg img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* تظهر كاملة */
+    transform: scale(1.6); /* تكبير بسيط لملء الفراغ */
+  }
+  
+  /* المحتوى */
+  .wrap {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    text-align: center;
+  }
+
+  h1{
+    font-size:46px;
+    margin-bottom:10px;
+    color:#fff
+  }
+
+  .current{
+    font-size:110px;
+    font-weight:900;
+    color:#22c55e;
+    margin:10px 0 24px
+  }
+  
+  .sub{
+    font-size:20px;
+    color:#cbd5e1;
+    margin-bottom:8px
+  }
+
+  .badge{
+    display:inline-block;
+    background:#3b82f6;
+    padding:12px 22px;
+    border-radius:999px;
+    margin:6px;
+    font-size:28px
+  }
+  
+  </style>
+  
+  <div class="bg">
+    <img src="Helwan National University.jpg" alt="background">
+  </div>
+  
+  <div class="wrap">
+    <h1 style="margin-top: 1.3cm;">2</h1>
+    <div id="current" class="current">0</div>
+  </div>
+  
+
+<script>
+const DESK = '2';
+const LS = {QUEUE:'waitingNumbers', HISTORY:'historyStack'};
+
+function load(k,f){ try{ return JSON.parse(localStorage.getItem(k)) ?? f; }catch{ return f; } }
+
+function render(){
+  const q = load(LS.QUEUE, []);
+  const h = load(LS.HISTORY, []);
+  const last = [...h].reverse().find(x => x.desk === DESK);
+  const currentEl = document.getElementById('current');
+  const prev = currentEl.textContent;
+  const now = last ? last.number : 0;
+  currentEl.textContent = now;
+  if (String(prev) !== String(now)) { currentEl.classList.remove('flash'); void currentEl.offsetWidth; currentEl.classList.add('flash'); }
+
+  const mine = q.filter(x => x.desk === DESK).sort((a,b)=>a.number-b.number);
+  const list = document.getElementById('list');
+  list.innerHTML = mine.length ? mine.map(i=>`<span class="badge">#${i.number}</span>`).join(' ') : '<span style="color:#94a3b8;font-size:22px">لا توجد أرقام حالياً</span>';
+}
+
+window.addEventListener('storage', (e)=>{
+  if (![LS.QUEUE, LS.HISTORY].includes(e.key)) return;
+  render();
+});
+
+setInterval(render, 800);
+render();
+</script>
+</body>
+</html>
