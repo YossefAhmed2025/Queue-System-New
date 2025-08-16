@@ -15,63 +15,63 @@
             --success: #16a34a;
             --warn: #f59e0b;
             --danger: #dc2626;
-            --chip: #3b82f6;
         }
-
-        * {
-            box-sizing: border-box;
-        }
-
+        * { box-sizing: border-box; }
         body {
-            margin: 0;
-            background: var(--bg);
-            font-family: 'Segoe UI', Tahoma, sans-serif;
-            color: var(--text);
+           margin: 0;
+           font-family: 'Segoe UI', Tahoma, sans-serif;
+           color: var(--text);
+           background-image: url("HNU COVER.jpg");
+           background-size: cover;
+           background-repeat: no-repeat;
+           background-position: center;
+           background-attachment: fixed;
+           position: relative;
         }
-
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+            z-index: -1;
+        }
         .container {
-            max-width: 1100px;
+            max-width: 1200px;
             margin: 32px auto;
             padding: 0 16px;
         }
-
         .card {
             background: var(--card);
             border-radius: 18px;
             box-shadow: 0 10px 25px rgba(0,0,0,.08);
             padding: 24px;
         }
-
-        /* ===== Header ===== */
         .header {
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            gap: 12px;
             margin-bottom: 12px;
         }
-
-        .logo {
-           width: 48px;                   /* عرض اللوجو */
-           height: 48px;                  /* ارتفاع اللوجو */
-           border-radius: 12px;           /* الزوايا الدائرية */
-  
-           background-image: url("gam3a.png");  /* مسار الصورة */
-           background-size: cover;        /* ملء الإطار بالكامل بدون قص */
-           background-position: center;   /* تمركز الصورة في النص */
-           background-repeat: no-repeat;  /* منع تكرار الصورة */
+        .left-logos {
+            display: flex;
+            gap: 10px;
         }
-
-        .title {
-            font-size: 22px;
-            font-weight: 800;
+        .logo, .logo2, .logo3 {
+           width: 60px;
+           height: 60px;
+           border-radius: 15px;
+           background-size: cover;
+           background-position: center;
+           background-repeat: no-repeat;
         }
-
-        .subtitle {
-            color: var(--muted);
-            font-size: 14px;
-        }
-
-        /* ===== Row ===== */
+        .logo  { background-image: url("gam3a.png"); }
+        .logo2 { background-image: url("at7ad.png"); }
+        .logo3 { background-image: url("2osra.png"); }
+        .title { font-size: 22px; font-weight: 800; }
+        .subtitle { color: var(--muted); font-size: 14px; }
         .row {
             display: flex;
             gap: 12px;
@@ -79,9 +79,7 @@
             align-items: center;
             margin: 14px 0;
         }
-
-        select,
-        button {
+        select, button {
             padding: 12px 18px;
             font-size: 16px;
             border: none;
@@ -89,74 +87,22 @@
             font-weight: 700;
             cursor: pointer;
         }
-
-        select {
-            background: #eef2ff;
-        }
-
+        select { background: #eef2ff; }
         .btn {
             box-shadow: 0 6px 16px rgba(0,0,0,.08);
             transition: .2s;
         }
-
-        .btn:hover {
-            transform: translateY(-2px);
-        }
-
+        .btn:hover { transform: translateY(-2px); }
         .btn-primary { background: var(--primary); color: #fff; }
         .btn-success { background: var(--success); color: #fff; }
-        .btn-warn    { background: var(--warn);    color: #fff; }
-        .btn-danger  { background: var(--danger);  color: #fff; }
-
-        /* ===== Metrics ===== */
-        .metrics {
-            display: grid;
-            grid-template-columns: repeat(3, minmax(220px, 1fr));
-            gap: 12px;
-            margin-top: 8px;
-        }
-
-        .metric {
-            background: #f8fafc;
-            border: 1px solid #e5e7eb;
-            border-radius: 14px;
-            padding: 14px;
-        }
-
-        .metric .k {
-            font-size: 36px;
-            font-weight: 800;
-        }
-
-        .metric .l {
-            color: var(--muted);
-            font-size: 13px;
-        }
-
-        /* ===== Badges ===== */
-        .badges {
-            margin-top: 10px;
-        }
-
-        .badge {
-            display: inline-block;
-            background: var(--chip);
-            color: #fff;
-            padding: 6px 12px;
-            border-radius: 999px;
-            margin: 4px;
-            font-size: 14px;
-        }
-
-        /* ===== Misc ===== */
+        .btn-danger { background: var(--danger); color: #fff; }
         .hr {
             height: 1px;
             background: #e5e7eb;
-            margin: 16px 0;
+            margin: 20px 0;
         }
-
-        .help {
-            font-size: 13px;
+        .info {
+            font-size: 14px;
             color: var(--muted);
         }
     </style>
@@ -166,16 +112,23 @@
     <div class="container">
         <div class="card">
 
-            <!-- Header -->
             <div class="header">
-                <div class="logo"></div>
-                <div>
-                    <div class="title">جامعة حلوان الأهلية — لوحة تحكم نظام الطوابير</div>
-                    <div class="subtitle">إصدار أرقام • توزيع على المكاتب • تراجع وإعادة ضبط</div>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <div class="logo"></div>
+                    <div>
+                        <div class="title">لوحة تحكم نظام الطوابير — جامعة حلوان الأهلية</div>
+                        <div class="subtitle">اختر مكتبًا ثم قم باستدعاء الرقم التالي أو اختر رقمًا محددًا</div>
+                    </div>
+                </div>
+
+                <div class="left-logos">
+                    <div class="logo2"></div>
+                    <div class="logo3"></div>
                 </div>
             </div>
 
-            <!-- Controls -->
+            <div class="hr"></div>
+
             <div class="row">
                 <label>اختر المكتب:</label>
                 <select id="deskSelect">
@@ -186,150 +139,156 @@
                     <option value="5">مكتب 5</option>
                 </select>
 
-                <button class="btn btn-primary" id="btnIssue">إصدار رقم جديد</button>
-                <button class="btn btn-success" id="btnNext">التالي</button>
-                <button class="btn btn-warn" id="btnUndo">تراجع</button>
-                <button class="btn btn-danger" id="btnReset">إعادة ضبط</button>
-            </div>
+                <label>اختر الرقم:</label>
+                <select id="numberSelect"></select>
 
-            <!-- Metrics -->
-            <div class="metrics">
-                <div class="metric">
-                    <div class="k" id="mIssued">0</div>
-                    <div class="l">إجمالي الأرقام الصادرة</div>
-                </div>
-                <div class="metric">
-                    <div class="k" id="mWaiting">0</div>
-                    <div class="l">الأرقام في الانتظار (بدون مكتب)</div>
-                </div>
-                <div class="metric">
-                    <div class="k" id="mAssigned">0</div>
-                    <div class="l">الأرقام الموزعة على المكاتب</div>
-                </div>
+                <button class="btn btn-primary" id="btnCallSelected">استدعاء الرقم المختار</button>
+                <button class="btn btn-success" id="btnCallNext">استدعاء التالي</button>
+                <button class="btn btn-danger" id="btnReset">اعادة الضبط</button>
             </div>
-
+            
             <div class="hr"></div>
-
-            <!-- Waiting list -->
-            <div>
-                <strong>قائمة الانتظار:</strong>
-                <div class="badges" id="waitingList"></div>
+            <div class="info">
+                حالة المكتب الحالي (<b id="currentDeskInfo">مكتب 1</b>):
+                الرقم الحالي المعروض هو <b id="currentNumberInfo">-</b>.
+                آخر رقم تم استدعاؤه هو <b id="lastCalledInfo">-</b>.
             </div>
-
-            <div class="hr"></div>
 
         </div>
     </div>
 
     <script>
-        // ===== Keys for localStorage =====
-        const LS_KEYS = {
-            ISSUED: 'issuedNumbers',
-            QUEUE: 'waitingNumbers',
-            HISTORY: 'historyStack'
+        const STATE_KEY = 'queue_system_state';
+
+        const DESK_CONFIG = {
+            '1': { start: 1, end: 100 },
+            '2': { start: 1, end: 100 },
+            '3': { start: 1, end: 100 },
+            '4': { start: 1, end: 100 },
+            '5': { start: 1, end: 100 },
         };
 
-        // ===== State =====
-        let issuedNumbers = load(LS_KEYS.ISSUED, 0);
-        let waitingNumbers = load(LS_KEYS.QUEUE, []);
-        let historyStack   = load(LS_KEYS.HISTORY, []);
+        let deskState = loadState();
 
-        function load(key, fallback) {
+        function loadState() {
             try {
-                return JSON.parse(localStorage.getItem(key)) ?? fallback;
-            } catch {
-                return fallback;
+                const state = JSON.parse(localStorage.getItem(STATE_KEY));
+                if (state && typeof state === 'object' && state['1']) return state;
+            } catch {}
+            const initialState = {};
+            for (const deskId in DESK_CONFIG) {
+                initialState[deskId] = { current: null, lastCalled: null };
             }
+            return initialState;
         }
 
-        function save() {
-            localStorage.setItem(LS_KEYS.ISSUED, JSON.stringify(issuedNumbers));
-            localStorage.setItem(LS_KEYS.QUEUE, JSON.stringify(waitingNumbers));
-            localStorage.setItem(LS_KEYS.HISTORY, JSON.stringify(historyStack));
+        function saveState() {
+            localStorage.setItem(STATE_KEY, JSON.stringify(deskState));
         }
 
-        // ===== UI Elements =====
-        const deskSelect = document.getElementById('deskSelect');
-        const btnIssue   = document.getElementById('btnIssue');
-        const btnNext    = document.getElementById('btnNext');
-        const btnUndo    = document.getElementById('btnUndo');
-        const btnReset   = document.getElementById('btnReset');
+        const deskSelect      = document.getElementById('deskSelect');
+        const numberSelect    = document.getElementById('numberSelect');
+        const btnCallSelected = document.getElementById('btnCallSelected');
+        const btnCallNext     = document.getElementById('btnCallNext');
+        const btnReset        = document.getElementById('btnReset');
+        
+        const currentDeskInfo   = document.getElementById('currentDeskInfo');
+        const currentNumberInfo = document.getElementById('currentNumberInfo');
+        const lastCalledInfo    = document.getElementById('lastCalledInfo');
 
-        // ===== Event Handlers =====
-        btnIssue.onclick = () => {
-            issuedNumbers++;
-            waitingNumbers.push({ number: issuedNumbers, desk: null });
-            save();
+        // دالة نطق الرقم
+        function speakNumber(number, desk){
+            const msg = new SpeechSynthesisUtterance(`الرقم ${number} يتوجه إلى مكتب ${desk}`);
+            msg.lang='ar-EG';
+            speechSynthesis.speak(msg);
+        }
+
+        deskSelect.onchange = () => {
+            updateNumberDropdown();
             render();
         };
 
-        btnNext.onclick = () => {
-            const desk = deskSelect.value;
-            const idx = waitingNumbers.findIndex(i => i.desk === null);
-
-            if (idx === -1) {
-                alert('لا توجد أرقام في قائمة الانتظار');
-                return;
-            }
-
-            waitingNumbers[idx].desk = desk;
-            historyStack.push({ number: waitingNumbers[idx].number, desk });
-            save();
+        btnCallNext.onclick = () => {
+            const deskId = deskSelect.value;
+            const config = DESK_CONFIG[deskId];
+            let last = deskState[deskId].lastCalled;
+            let nextNumber = (last === null || last >= config.end) ? config.start : last + 1;
+            deskState[deskId].current = nextNumber;
+            deskState[deskId].lastCalled = nextNumber;
+            saveState();
             render();
+            speakNumber(nextNumber, deskId); // نطق الرقم
         };
 
-        btnUndo.onclick = () => {
-            if (historyStack.length === 0) {
-                alert('لا يوجد رقم للتراجع');
-                return;
-            }
-
-            const last = historyStack.pop();
-            const item = waitingNumbers.find(i => i.number === last.number);
-
-            if (item) item.desk = null;
-            save();
+        btnCallSelected.onclick = () => {
+            const deskId = deskSelect.value;
+            const selectedNumber = parseInt(numberSelect.value, 10);
+            if (isNaN(selectedNumber)) return;
+            deskState[deskId].current = selectedNumber;
+            deskState[deskId].lastCalled = selectedNumber;
+            saveState();
             render();
+            speakNumber(selectedNumber, deskId); // نطق الرقم
         };
 
         btnReset.onclick = () => {
-            if (!confirm('هل تريد إعادة ضبط النظام بالكامل؟')) return;
-            issuedNumbers = 0;
-            waitingNumbers = [];
-            historyStack = [];
-            save();
+            const deskId = deskSelect.value;
+            deskState[deskId].current = null;
+            deskState[deskId].lastCalled = null;
+            saveState();
             render();
         };
 
-        // ===== Render Function =====
-        function render() {
-            document.getElementById('mIssued').textContent   = issuedNumbers;
-            document.getElementById('mWaiting').textContent  = waitingNumbers.filter(i => i.desk === null).length;
-            document.getElementById('mAssigned').textContent = waitingNumbers.filter(i => i.desk !== null).length;
-
-            const w = document.getElementById('waitingList');
-
-            if (waitingNumbers.length === 0) {
-                w.textContent = 'لا توجد أرقام حالياً.';
-                return;
+        function updateNumberDropdown() {
+            const deskId = deskSelect.value;
+            const config = DESK_CONFIG[deskId];
+            numberSelect.innerHTML = '';
+            for (let i = config.start; i <= config.end; i++) {
+                const option = document.createElement('option');
+                option.value = i;
+                option.textContent = i;
+                numberSelect.appendChild(option);
             }
-
-            w.innerHTML = waitingNumbers
-                .map(i => `<span class="badge">#${i.number}${i.desk ? ` → مكتب ${i.desk}` : ''}</span>`)
-                .join(' ');
         }
 
-        // ===== Sync with other tabs =====
-        window.addEventListener('storage', (e) => {
-            if (![LS_KEYS.ISSUED, LS_KEYS.QUEUE, LS_KEYS.HISTORY].includes(e.key)) return;
+        function render() {
+            const deskId = deskSelect.value;
+            const state = deskState[deskId];
+            currentDeskInfo.textContent = `مكتب ${deskId}`;
+            currentNumberInfo.textContent = state.current ?? '-';
+            lastCalledInfo.textContent = state.lastCalled ?? '-';
+        }
 
-            issuedNumbers = load(LS_KEYS.ISSUED, 0);
-            waitingNumbers = load(LS_KEYS.QUEUE, []);
-            historyStack = load(LS_KEYS.HISTORY, []);
-            render();
+        window.addEventListener('storage', (e) => {
+            if (e.key === STATE_KEY) {
+                deskState = loadState();
+                render();
+            }
         });
 
+        updateNumberDropdown();
         render();
+
+        window.addEventListener('keydown', (e) => {
+            let targetDesk = null;
+            switch (e.key) {
+                case 'a': targetDesk = '1'; break;
+                case 'b': targetDesk = '2'; break;
+                case 'c': targetDesk = '3'; break;
+                case 'd': targetDesk = '4'; break;
+                case 'e': targetDesk = '5'; break;
+            }
+            if (targetDesk) {
+                e.preventDefault();
+                if (deskSelect.value !== targetDesk) {
+                    deskSelect.value = targetDesk;
+                    deskSelect.dispatchEvent(new Event('change'));
+                }
+                setTimeout(() => {
+                    btnCallNext.click();
+                }, 50);
+            }
+        });
     </script>
 </body>
 </html>

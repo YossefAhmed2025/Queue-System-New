@@ -8,11 +8,10 @@
   *{box-sizing:border-box;margin:0;padding:0}
   body,html{
     height:100%;
-    font-family:'Segoe UI',Tahoma,sans-serif;
+    font-family:'Segoe UI', Tahoma, sans-serif; /* Keep Segoe UI, it's clean */
     color:#fff;
+    overflow: hidden;
   }
-  
-  /* الصورة خلفية */
   .bg {
     position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;
@@ -20,15 +19,23 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    background: #111; /* Fallback background */
   }
   .bg img {
     width: 100%;
     height: 100%;
-    object-fit: contain; /* تظهر كاملة */
-    transform: scale(1.6); /* تكبير بسيط لملء الفراغ */
+    object-fit: cover; /* Cover the entire area */
+    opacity: 0.8; /* More subtle background */
+    /* Removed: filter: grayscale(50%); */
   }
-  
-  /* المحتوى */
+  /* Dark overlay to make text pop */
+  .bg::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.1); /* Darker overlay */
+    z-index: 0;
+  }
   .wrap {
     min-height: 100vh;
     display: flex;
@@ -37,75 +44,82 @@
     justify-content: center;
     padding: 24px;
     text-align: center;
+    position: relative; /* Ensure content is above overlay */
+    z-index: 1;
   }
-
   h1{
-    font-size:46px;
-    margin-bottom:10px;
-    color:#fff
+    font-size: 8vw; /* Responsive font size */
+    font-weight: 900; /* Extra bold */
+    margin-bottom: 20px; /* More space */
+    margin-top: 50px; /* Added to lower the element */
+    color:#fff;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5); /* Subtle shadow */
   }
-
   .current{
-    font-size:110px;
+    font-size: 25vw; /* Even larger for impact */
     font-weight:900;
-    color:#22c55e;
-    margin:10px 0 24px
+    color:#22c55e; /* Vibrant green */
+    text-shadow: 4px 4px 8px rgba(0,0,0,0.7); /* Stronger shadow for number */
+    margin:10px 0 24px;
+    transition: transform 0.2s ease-in-out;
   }
-  
-  .sub{
-    font-size:20px;
-    color:#cbd5e1;
-    margin-bottom:8px
+  @keyframes flash {
+    0% { transform: scale(1); color: #22c55e; }
+    50% { transform: scale(1.2); color: #f59e0b; /* Orange flash */ }
+    100% { transform: scale(1); color: #22c55e; }
   }
-
-  .badge{
-    display:inline-block;
-    background:#3b82f6;
-    padding:12px 22px;
-    border-radius:999px;
-    margin:6px;
-    font-size:28px
+  .flash {
+    animation: flash 0.6s ease; /* Slower, more noticeable flash */
   }
-  
-  </style>
-  
+</style>
+</head>
+<body>
   <div class="bg">
     <img src="Helwan National University.jpg" alt="background">
   </div>
   
   <div class="wrap">
-    <h1 style="margin-top: 1.3cm;">1</h1>
+    <h1 id="deskNumber">1</h1>
     <div id="current" class="current">0</div>
   </div>
-  
 
 <script>
-const DESK = '1';
-const LS = {QUEUE:'waitingNumbers', HISTORY:'historyStack'};
+const DESK_ID = '1';
+const STATE_KEY = 'queue_system_state';
 
-function load(k,f){ try{ return JSON.parse(localStorage.getItem(k)) ?? f; }catch{ return f; } }
-
-function render(){
-  const q = load(LS.QUEUE, []);
-  const h = load(LS.HISTORY, []);
-  const last = [...h].reverse().find(x => x.desk === DESK);
-  const currentEl = document.getElementById('current');
-  const prev = currentEl.textContent;
-  const now = last ? last.number : 0;
-  currentEl.textContent = now;
-  if (String(prev) !== String(now)) { currentEl.classList.remove('flash'); void currentEl.offsetWidth; currentEl.classList.add('flash'); }
-
-  const mine = q.filter(x => x.desk === DESK).sort((a,b)=>a.number-b.number);
-  const list = document.getElementById('list');
-  list.innerHTML = mine.length ? mine.map(i=>`<span class="badge">#${i.number}</span>`).join(' ') : '<span style="color:#94a3b8;font-size:22px">لا توجد أرقام حالياً</span>';
+function loadState() {
+    try {
+        const state = JSON.parse(localStorage.getItem(STATE_KEY));
+        return state || {};
+    } catch {
+        return {};
+    }
 }
 
-window.addEventListener('storage', (e)=>{
-  if (![LS.QUEUE, LS.HISTORY].includes(e.key)) return;
-  render();
+function render() {
+    const state = loadState();
+    const deskState = state[DESK_ID] || { current: 0 };
+    
+    const currentEl = document.getElementById('current');
+    const oldNumber = currentEl.textContent;
+    const newNumber = deskState.current || 0;
+
+    if (String(oldNumber) !== String(newNumber)) {
+        currentEl.textContent = newNumber;
+        currentEl.classList.remove('flash');
+        void currentEl.offsetWidth; // Trigger reflow
+        currentEl.classList.add('flash');
+    }
+}
+
+window.addEventListener('storage', (e) => {
+  if (e.key === STATE_KEY) {
+    render();
+  }
 });
 
-setInterval(render, 800);
+// Initial render
+document.getElementById('deskNumber').textContent = DESK_ID;
 render();
 </script>
 </body>
