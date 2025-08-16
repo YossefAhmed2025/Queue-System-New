@@ -157,8 +157,26 @@
         </div>
     </div>
 
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+
     <script>
-        const STATE_KEY = 'queue_system_state';
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDsNSCnJ5EUUd6TT7ZlM1yvBuDNkiZ8Si0",
+            authDomain: "hnu-system.firebaseapp.com",
+            projectId: "hnu-system",
+            storageBucket: "hnu-system.firebasestorage.app",
+            messagingSenderId: "461347950072",
+            appId: "1:461347950072:web:76966d73d3abdff7da9a0d",
+            measurementId: "G-R6SEPHNG4W"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        const queueStateRef = database.ref('queueState');
 
         const DESK_CONFIG = {
             '1': { start: 1, end: 100 },
@@ -168,23 +186,7 @@
             '5': { start: 1, end: 100 },
         };
 
-        let deskState = loadState();
-
-        function loadState() {
-            try {
-                const state = JSON.parse(localStorage.getItem(STATE_KEY));
-                if (state && typeof state === 'object' && state['1']) return state;
-            } catch {}
-            const initialState = {};
-            for (const deskId in DESK_CONFIG) {
-                initialState[deskId] = { current: null, lastCalled: null };
-            }
-            return initialState;
-        }
-
-        function saveState() {
-            localStorage.setItem(STATE_KEY, JSON.stringify(deskState));
-        }
+        let deskState = {};
 
         const deskSelect      = document.getElementById('deskSelect');
         const numberSelect    = document.getElementById('numberSelect');
@@ -196,7 +198,25 @@
         const currentNumberInfo = document.getElementById('currentNumberInfo');
         const lastCalledInfo    = document.getElementById('lastCalledInfo');
 
-        // دالة نطق الرقم
+        // Function to save the entire state to Firebase
+        function saveStateToFirebase() {
+            queueStateRef.set(deskState);
+        }
+
+        // Listen for state changes from Firebase
+        queueStateRef.on('value', (snapshot) => {
+            const state = snapshot.val();
+            if (state && typeof state === 'object' && state['1']) {
+                deskState = state;
+            } else {
+                // Initialize state if it's not in Firebase
+                for (const deskId in DESK_CONFIG) {
+                    deskState[deskId] = { current: null, lastCalled: null };
+                }
+            }
+            render();
+        });
+
         function speakNumber(number, desk){
             const msg = new SpeechSynthesisUtterance(`الرقم ${number} يتوجه إلى مكتب ${desk}`);
             msg.lang='ar-EG';
@@ -215,9 +235,8 @@
             let nextNumber = (last === null || last >= config.end) ? config.start : last + 1;
             deskState[deskId].current = nextNumber;
             deskState[deskId].lastCalled = nextNumber;
-            saveState();
-            render();
-            speakNumber(nextNumber, deskId); // نطق الرقم
+            saveStateToFirebase();
+            speakNumber(nextNumber, deskId);
         };
 
         btnCallSelected.onclick = () => {
@@ -226,17 +245,15 @@
             if (isNaN(selectedNumber)) return;
             deskState[deskId].current = selectedNumber;
             deskState[deskId].lastCalled = selectedNumber;
-            saveState();
-            render();
-            speakNumber(selectedNumber, deskId); // نطق الرقم
+            saveStateToFirebase();
+            speakNumber(selectedNumber, deskId);
         };
 
         btnReset.onclick = () => {
             const deskId = deskSelect.value;
             deskState[deskId].current = null;
             deskState[deskId].lastCalled = null;
-            saveState();
-            render();
+            saveStateToFirebase();
         };
 
         function updateNumberDropdown() {
@@ -253,18 +270,14 @@
 
         function render() {
             const deskId = deskSelect.value;
+            if (!deskState[deskId]) { // Ensure state for desk exists
+                 deskState[deskId] = { current: null, lastCalled: null };
+            }
             const state = deskState[deskId];
             currentDeskInfo.textContent = `مكتب ${deskId}`;
             currentNumberInfo.textContent = state.current ?? '-';
             lastCalledInfo.textContent = state.lastCalled ?? '-';
         }
-
-        window.addEventListener('storage', (e) => {
-            if (e.key === STATE_KEY) {
-                deskState = loadState();
-                render();
-            }
-        });
 
         updateNumberDropdown();
         render();

@@ -8,7 +8,7 @@
   *{box-sizing:border-box;margin:0;padding:0}
   body,html{
     height:100%;
-    font-family:'Segoe UI', Tahoma, sans-serif; /* Keep Segoe UI, it's clean */
+    font-family:'Segoe UI', Tahoma, sans-serif;
     color:#fff;
     overflow: hidden;
   }
@@ -19,21 +19,19 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #111; /* Fallback background */
+    background: #111;
   }
   .bg img {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* Cover the entire area */
-    opacity: 0.8; /* More subtle background */
-    /* Removed: filter: grayscale(50%); */
+    object-fit: cover;
+    opacity: 0.8;
   }
-  /* Dark overlay to make text pop */
   .bg::after {
     content: '';
     position: absolute;
     top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0, 0, 0, 0.1); /* Darker overlay */
+    background: rgba(0, 0, 0, 0.1);
     z-index: 0;
   }
   .wrap {
@@ -44,32 +42,32 @@
     justify-content: center;
     padding: 24px;
     text-align: center;
-    position: relative; /* Ensure content is above overlay */
+    position: relative;
     z-index: 1;
   }
   h1{
-    font-size: 8vw; /* Responsive font size */
-    font-weight: 900; /* Extra bold */
-    margin-bottom: 20px; /* More space */
-    margin-top: 50px; /* Added to lower the element */
+    font-size: 8vw;
+    font-weight: 900;
+    margin-bottom: 20px;
+    margin-top: 50px;
     color:#fff;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.5); /* Subtle shadow */
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
   }
   .current{
-    font-size: 25vw; /* Even larger for impact */
+    font-size: 25vw;
     font-weight:900;
-    color:#22c55e; /* Vibrant green */
-    text-shadow: 4px 4px 8px rgba(0,0,0,0.7); /* Stronger shadow for number */
+    color:#22c55e;
+    text-shadow: 4px 4px 8px rgba(0,0,0,0.7);
     margin:10px 0 24px;
     transition: transform 0.2s ease-in-out;
   }
   @keyframes flash {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.2); color: #f59e0b; /* Orange flash */ }
+    0% { transform: scale(1); color: #22c55e; }
+    50% { transform: scale(1.2); color: #f59e0b; }
     100% { transform: scale(1); color: #22c55e; }
   }
   .flash {
-    animation: flash 0.6s ease; /* Slower, more noticeable flash */
+    animation: flash 0.6s ease;
   }
 </style>
 </head>
@@ -80,47 +78,48 @@
   
   <div class="wrap">
     <h1 id="deskNumber">3</h1>
-    <div id="current" class="current">0</div>
+    <div id="current" class="current">-</div>
   </div>
 
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+
 <script>
-const DESK_ID = '3';
-const STATE_KEY = 'queue_system_state';
+    const DESK_ID = '3';
 
-function loadState() {
-    try {
-        const state = JSON.parse(localStorage.getItem(STATE_KEY));
-        return state || {};
-    } catch {
-        return {};
-    }
-}
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyDsNSCnJ5EUUd6TT7ZlM1yvBuDNkiZ8Si0",
+        authDomain: "hnu-system.firebaseapp.com",
+        projectId: "hnu-system",
+        storageBucket: "hnu-system.firebasestorage.app",
+        messagingSenderId: "461347950072",
+        appId: "1:461347950072:web:76966d73d3abdff7da9a0d",
+        measurementId: "G-R6SEPHNG4W"
+    };
 
-function render() {
-    const state = loadState();
-    const deskState = state[DESK_ID] || { current: 0 };
-    
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+    const queueStateRef = database.ref('queueState/' + DESK_ID);
+
     const currentEl = document.getElementById('current');
-    const oldNumber = currentEl.textContent;
-    const newNumber = deskState.current || 0;
+    document.getElementById('deskNumber').textContent = `مكتب ${DESK_ID}`;
 
-    if (String(oldNumber) !== String(newNumber)) {
-        currentEl.textContent = newNumber;
-        currentEl.classList.remove('flash');
-        void currentEl.offsetWidth; // Trigger reflow
-        currentEl.classList.add('flash');
-    }
-}
+    // Listen for state changes from Firebase
+    queueStateRef.on('value', (snapshot) => {
+        const deskState = snapshot.val() || { current: '-' };
+        const oldNumber = currentEl.textContent;
+        const newNumber = deskState.current ?? '-';
 
-window.addEventListener('storage', (e) => {
-  if (e.key === STATE_KEY) {
-    render();
-  }
-});
-
-// Initial render
-document.getElementById('deskNumber').textContent = DESK_ID;
-render();
+        if (String(oldNumber) !== String(newNumber)) {
+            currentEl.textContent = newNumber;
+            currentEl.classList.remove('flash');
+            void currentEl.offsetWidth; // Trigger reflow
+            currentEl.classList.add('flash');
+        }
+    });
 </script>
 </body>
 </html>
